@@ -43,11 +43,11 @@ function! s:play()
   let s:start_time = reltime()
 endfunction
 
-function! Elapsed_reltime()
+function! Elapsed_reltime(offset)
   let r = reltime(s:start_time)
   let x = split(s:seconds, ',')
   let y = split(x[0], ':')
-  let x[0] = (y[0] * 3600) + (y[1] * 60) + y[2] + 0
+  let x[0] = (y[0] * 3600) + (y[1] * 60) + y[2] + a:offset
   return [r[0] + x[0], r[1]]
   "+ x[1]]   "bad overflow
 endfunction
@@ -70,11 +70,12 @@ function! Reltime2secs(r)
 endfunction
 
 function! s:start_subtitle_line()
-  let start_time = Reltime2secs(Elapsed_reltime())
+  let start_time = Reltime2secs(Elapsed_reltime(0))
+  let end_time = Reltime2secs(Elapsed_reltime(1))
   if getline('.') == ''
     normal! o
   endif
-  call setline(line('.'), printf("%s --> 00:00:00,000", start_time))
+  call setline(line('.'), printf("%s --> %s", start_time, end_time))
 endfunction
 
 function! s:next_entry()
@@ -87,9 +88,7 @@ function! s:next_entry()
   endif
 endfunction
 
-nnoremap <enter> :call <SID>play()<cr>
-nnoremap p {
-nnoremap n :call <SID>next_entry()<cr>
-nnoremap s :call <SID>start_subtitle_line()<cr>
-nnoremap e :call <SID>end_subtitle_line()<cr>
-nnoremap q :call <SID>quit()<cr>
+nnoremap <up>    :call <SID>play()<cr>
+nnoremap <down>  :call <SID>next_entry()<cr>
+nnoremap <right> :call <SID>start_subtitle_line()<cr>
+nnoremap <left>  :call <SID>end_subtitle_line()<cr>

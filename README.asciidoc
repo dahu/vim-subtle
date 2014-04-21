@@ -10,4 +10,11 @@ __SRT Subtitling, right from within Vim__
 WARNING: vim-subtle is pre-alpha. Do not use it yet. But if you, do, feedback,
 w00t!
 
-Seriously. Don't use it yet. It has horrid maps with no recovery.
+Keys
+~~~~
+
+* +<up>+ : start mplayer at the current time stamp
+* +<down>+ : move down to the next entry at the time stamp if one exists, or above the text line, ready for a time stamp to be added
+* +<right>+ : add current time stamp and end stamp offset from start by one second
+* +<left>+ : add current end time stamp
+
