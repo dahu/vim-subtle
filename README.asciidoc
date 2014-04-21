@@ -1,0 +1,13 @@
+vim-subtle
+----------
+
+__SRT Subtitling, right from within Vim__
+
+// TIP: If you like vim-subtle and want to share the W00t!, I'm grateful for
+// https://www.gittip.com/bairuidahu/[tips] or
+// http://of-vim-and-vigor.blogspot.com/[beverages].
+
+WARNING: vim-subtle is pre-alpha. Do not use it yet. But if you, do, feedback,
+w00t!
+
+Seriously. Don't use it yet. It has horrid maps with no recovery.
