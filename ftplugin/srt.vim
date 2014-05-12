@@ -1,10 +1,23 @@
-let s:subfile = escape(fnameescape('Tori Amos - Smells Like Teen Spirit (Nirvana).srt'), '()')
-let s:vidfile = escape(fnameescape('Tori Amos - Smells Like Teen Spirit (Nirvana).mp4'), '()')
+function! SetVidfile(vidfile)
+  let s:vidfile = fnamemodify(a:vidfile, ':p')
+endfunction
 
-let s:player='"mplayer -identify -osdlevel 2 -ss " . s:player_seconds . " -slang -noautosub -sub " . s:subfile . " -utf8 " . s:vidfile . " < /dev/null &"'
+function! s:init()
+  let s:subfile = fnamemodify(fnameescape(bufname('%')), ':p')
+  let s:vidfile = fnamemodify(s:subfile, ':r') . '.mp4'
 
-let s:rx_time = '^\d\d:\d\d:\d\d,\d\d\d'
-let s:zero_time = '00:00:00'
+  let s:player='"mplayer -identify -osdlevel 2 -ss " . s:player_seconds . " -slang -noautosub -sub " . s:subfile . " -utf8 " . s:vidfile . " < /dev/null &"'
+
+  let s:rx_time = '^\d\d:\d\d:\d\d,\d\d\d'
+  let s:zero_time = '00:00:00'
+
+  nnoremap <buffer> <up>    :call <SID>play()<cr>zz
+  nnoremap <buffer> <down>  :call <SID>next_entry()<cr>zz
+  nnoremap <buffer> <right> :call <SID>start_subtitle_line()<cr>zz
+  nnoremap <buffer> <left>  :call <SID>end_subtitle_line()<cr>:call <SID>next_entry()<cr>zz
+
+  command! -nargs=1 -complete=file SetVidfile call SetVidfile(<q-args>)
+endfunction
 
 " hack, but it might just work
 function! s:subtract_seconds(seconds, amount)
@@ -69,6 +82,15 @@ function! Reltime2secs(r)
   return printf("%02d:%02d:%02d,%03d", h, m, s, strpart(us, 0, 3))
 endfunction
 
+function! s:end_subtitle_line()
+  let line = getline('.')
+  if line =~ '^\d\d:\d\d:\d\d,\d\{3}'
+    let start_time = matchstr(line, '^\d\d:\d\d:\d\d,\d\{3}')
+    let end_time = Reltime2secs(Elapsed_reltime(0))
+    call setline(line('.'), printf("%s --> %s", start_time, end_time))
+  endif
+endfunction
+
 function! s:start_subtitle_line()
   let start_time = Reltime2secs(Elapsed_reltime(0))
   let end_time = Reltime2secs(Elapsed_reltime(1))
@@ -88,7 +110,4 @@ function! s:next_entry()
   endif
 endfunction
 
-nnoremap <up>    :call <SID>play()<cr>
-nnoremap <down>  :call <SID>next_entry()<cr>
-nnoremap <right> :call <SID>start_subtitle_line()<cr>
-nnoremap <left>  :call <SID>end_subtitle_line()<cr>
+call s:init()
